@@ -1,0 +1,10 @@
+# .NET и Visual Studio
+bin/
+obj/
+*.user
+*.suo
+.vs/
+app.db
+*.db
+node_modules/
+wwwroot/lib/
