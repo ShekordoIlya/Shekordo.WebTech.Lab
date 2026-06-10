@@ -1,0 +1,95 @@
+﻿@using Shekordo.Domain.Entities
+@model IEnumerable<Dish>
+
+@{
+    ViewData["Title"] = "Каталог блюд";
+    var request = ViewContext.HttpContext.Request;
+    var returnUrl = request.Path + request.QueryString.ToUriComponent();
+    var categories = ViewBag.Categories as IEnumerable<Category>;
+}
+
+<h2 class="m-3">Меню кафе</h2>
+
+<div class="row">
+    <div class="col-2 border-2">
+        <ul class="nav">
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" 
+                   data-bs-toggle="dropdown" 
+                   href="#" 
+                   role="button" 
+                   aria-expanded="false">
+                    @ViewBag.CurrentCategory
+                </a>
+                <ul class="dropdown-menu">
+                    <li>
+                        <a class="dropdown-item" 
+                           asp-controller="product" 
+                           asp-route-category="">Все</a>
+                    </li>
+                    @if (categories != null)
+                    {
+                        @foreach (var item in categories)
+                        {
+                            <li>
+                                <a class="dropdown-item" 
+                                   asp-controller="product" 
+                                   asp-route-category="@item.NormalizedName">
+                                    @item.Name
+                                </a>
+                            </li>
+                        }
+                    }
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <div class="col-10">
+        @if (Model != null && Model.Any())
+        {
+            <div class="row row-cols-1 row-cols-md-3 g-4">
+                @foreach (var item in Model)
+                {
+                    <div class="col">
+                        <div class="card h-100 border-dark">
+                            <img class="card-img-top" 
+                                 src="@item.Image" 
+                                 alt="@item.Name"
+                                 style="height: 200px; object-fit: cover;" />
+                            <div class="card-body">
+                                <h5 class="card-title">@item.Name</h5>
+                                <p class="card-text">@item.Description</p>
+                                <h5><span class="badge bg-secondary">@item.Calories ккал</span></h5>
+                            </div>
+                            <div class="card-footer text-center">
+                                <a class="btn btn-outline-primary" 
+                                   asp-action="add" 
+                                   asp-controller="cart" 
+                                   asp-route-id="@item.Id" 
+                                   asp-route-returnurl="@returnUrl">
+                                    В корзину <i class="fa-solid fa-cart-shopping"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-warning">
+                @ViewBag.Error ?? "Нет блюд в выбранной категории"
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        var dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'))
+        var dropdownList = dropdownElementList.map(function (dropdownToggleEl) {
+            return new bootstrap.Dropdown(dropdownToggleEl)
+        })
+    </script>
+}

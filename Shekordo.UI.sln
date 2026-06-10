@@ -5,6 +5,8 @@ VisualStudioVersion = 17.14.37314.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shekordo.UI", "Shekordo.UI.csproj", "{B710014B-DF60-03B8-E11B-2DE1FE9C6793}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shekordo.Domain", "..\Shekordo.Domain\Shekordo.Domain.csproj", "{7354AD98-6924-4C6C-B320-592DC33B559A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{B710014B-DF60-03B8-E11B-2DE1FE9C6793}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B710014B-DF60-03B8-E11B-2DE1FE9C6793}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B710014B-DF60-03B8-E11B-2DE1FE9C6793}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7354AD98-6924-4C6C-B320-592DC33B559A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7354AD98-6924-4C6C-B320-592DC33B559A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7354AD98-6924-4C6C-B320-592DC33B559A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7354AD98-6924-4C6C-B320-592DC33B559A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

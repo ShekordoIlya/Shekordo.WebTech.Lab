@@ -23,6 +23,11 @@
         <label for="confirmPassword">Confirm Password</label>
         <input type="password" name="confirmPassword" id="confirmPassword" class="form-control" required />
     </div>
+    <div class="mb-3">
+    <label asp-for="Input.Avatar" class="form-label"></label>
+    <input asp-for="Input.Avatar" class="form-control" type="file" accept="image/*" />
+    <span asp-validation-for="Input.Avatar" class="text-danger"></span>
+</div>
     <button type="submit" class="btn btn-primary">Register</button>
 </form>
 
