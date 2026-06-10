@@ -1,69 +1,12 @@
-﻿@{
-    Layout = null;
+﻿@model Microsoft.AspNetCore.Mvc.Rendering.SelectList
+@{
+    ViewData["Title"] = "Index";
 }
-<!DOCTYPE html>
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>Лабораторная работа 1</title>
-    <link rel="stylesheet" href="/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="/lib/font-awesome/css/all.min.css" />
-</head>
-<body>
-    <header>
-    <div class="container">
-        <nav class="navbar navbar-expand-md navbar-dark bg-dark">
-            <a class="navbar-brand" href="#">
-                <span class="badge bg-secondary">Шекордо</span>
-            </a>
-            <div class="navbar-nav">
-                <a class="nav-item nav-link active" href="#">Лб 1</a>
-                <a class="nav-item nav-link" href="#">Каталог</a>
-                <a class="nav-item nav-link" href="#">Администрирование</a>
-            </div>
 
-            <a href="#" class="navbar-text ms-auto">
-                00,0 руб <i class="fa-solid fa-cart-shopping"></i> (0)
-            </a>
-            <div class="dropdown ms-4 nav-color">
-                <button class="btn btn-secondary dropdown-toggle" 
-                        type="button" 
-                        id="dropdownMenuButton" 
-                        data-bs-toggle="dropdown" 
-                        aria-expanded="false">
-                    user@gmail.com
-                    <img src="/images/default-profile-picture.png" 
-                         width="30" 
-                         alt="User" 
-                         class="rounded nav-color" />
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <li>
-                        <span class="dropdown-item-text">
-                            <img src="/images/default-profile-picture.png" 
-                                 width="50" 
-                                 alt="User" 
-                                 class="rounded" />
-                            user@gmail.com
-                        </span>
-                    </li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li>
-                        <form id="logoutForm" class="form-inline" action="#">
-                            <button id="logout" type="submit" class="nav-link btn btn-link text-dark">Logout</button>
-                        </form>
-                    </li>
-                </ul>
-            </div>
-        </nav>
-    </div>
-</header>
-
-    <main class="container">
+<main class="container">
     <div class="row mt-4">
         <div class="col-md-8">
-            <h3>Веб-технологии</h3>
+            <h3>@ViewData["text"]</h3>
             <p>Кафедра МПСС</p>
             <p>Гламаздин И.И.</p>
         </div>
@@ -73,17 +16,18 @@
         <div class="col-md-6">
             <h4>Список групп</h4>
             <ol type="A">
-                <li>Первая группа</li>
-                <li>Вторая группа</li>
-                <li>Третья группа</li>
-            </ol>
+    @for (int i = 0; i < 5; i++)
+    {
+        <li>элемент @i списка</li>
+    }
+</ol>
         </div>
     </div>
 
     <div class="row mt-4">
         <div class="col-md-8">
             <h4>Форма для отправки данных</h4>
-            <form method="post" action="/Home/Index" class="row g-3">
+            <form method="post" asp-action="Index" class="row g-3">
                 <div class="col-md-12">
                     <label for="userName" class="form-label">Ваше имя:</label>
                     <input type="text" class="form-control" id="userName" name="userName" placeholder="Введите ваше имя" />
@@ -118,13 +62,8 @@
                 </div>
 
                 <div class="col-md-12">
-                    <label for="course" class="form-label">Выберите курс:</label>
-                    <select id="course" name="course" class="form-select">
-                        <option value="1">1 курс</option>
-                        <option value="2">2 курс</option>
-                        <option value="3">3 курс</option>
-                        <option value="4">4 курс</option>
-                    </select>
+                    <label for="selDemo" class="form-label">Выберите элемент:</label>
+                    <select class="form-select" id="selDemo" name="selDemo" asp-items="Model"></select>
                 </div>
 
                 <div class="col-12">
@@ -134,27 +73,3 @@
         </div>
     </div>
 </main>
-
-    <footer>
-    <div class="container">
-        <div class="navbar navbar-dark navbar-expand-md bg-dark">
-            <div class="navbar-nav ms-auto">
-                <a class="nav-item nav-link" href="http://www.facebook.com">
-                    <i class="fa-brands fa-facebook-f fa-2x"></i>
-                </a>
-                <a class="nav-item nav-link" href="http://www.vk.com">
-                    <i class="fa-brands fa-vk fa-2x"></i>
-                </a>
-                <a class="nav-item nav-link" href="http://www.twitter.com">
-                    <i class="fa-brands fa-twitter fa-2x"></i>
-                </a>
-            </div>
-        </div>
-    </div>
-</footer>
-
-    <script src="/lib/jquery/dist/jquery.min.js"></script>
-    <script src="/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="/js/site.js" asp-append-version="true"></script>
-</body>
-</html>

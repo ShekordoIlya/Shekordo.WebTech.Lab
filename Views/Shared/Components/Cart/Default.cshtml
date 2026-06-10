@@ -1,0 +1,8 @@
+﻿@{
+    decimal totalPrice = 125.50m;
+    int itemCount = 3;
+}
+
+<a asp-controller="cart" asp-action="index" class="navbar-text ms-auto">
+    @totalPrice руб <i class="fa-solid fa-cart-shopping"></i> (@itemCount)
+</a>
