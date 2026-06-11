@@ -1,11 +1,16 @@
 ﻿@using Shekordo.Domain.Entities
-@model IEnumerable<Dish>
+@using Shekordo.Domain.Models
+@model ListModel<Dish>
 
 @{
     ViewData["Title"] = "Каталог блюд";
     var request = ViewContext.HttpContext.Request;
     var returnUrl = request.Path + request.QueryString.ToUriComponent();
     var categories = ViewBag.Categories as IEnumerable<Category>;
+    
+    string? category = request.RouteValues["category"]?.ToString();
+    int prev = Model.CurrentPage == 1 ? 1 : Model.CurrentPage - 1;
+    int next = Model.CurrentPage == Model.TotalPages ? Model.TotalPages : Model.CurrentPage + 1;
 }
 
 <h2 class="m-3">Меню кафе</h2>
@@ -46,34 +51,13 @@
     </div>
 
     <div class="col-10">
-        @if (Model != null && Model.Any())
+        @if (Model.Items != null && Model.Items.Any())
         {
             <div class="row row-cols-1 row-cols-md-3 g-4">
-                @foreach (var item in Model)
-                {
-                    <div class="col">
-                        <div class="card h-100 border-dark">
-                            <img class="card-img-top" 
-                                 src="@item.Image" 
-                                 alt="@item.Name"
-                                 style="height: 200px; object-fit: cover;" />
-                            <div class="card-body">
-                                <h5 class="card-title">@item.Name</h5>
-                                <p class="card-text">@item.Description</p>
-                                <h5><span class="badge bg-secondary">@item.Calories ккал</span></h5>
-                            </div>
-                            <div class="card-footer text-center">
-                                <a class="btn btn-outline-primary" 
-                                   asp-action="add" 
-                                   asp-controller="cart" 
-                                   asp-route-id="@item.Id" 
-                                   asp-route-returnurl="@returnUrl">
-                                    В корзину <i class="fa-solid fa-cart-shopping"></i>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                }
+                @foreach (var item in Model.Items)
+{
+    <partial name="_ProductItemPartial" model="item" />
+}
             </div>
         }
         else
@@ -84,6 +68,10 @@
         }
     </div>
 </div>
+
+<pager current-page="@Model.CurrentPage"
+       total-pages="@Model.TotalPages"
+       category="@category"></pager>
 
 @section Scripts {
     <script>

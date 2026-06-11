@@ -1,4 +1,6 @@
 ﻿using Shekordo.Domain.Entities;
+using Shekordo.Domain.Models;
+using Microsoft.Extensions.Configuration;
 
 namespace Shekordo.UI.Services;
 
@@ -6,9 +8,11 @@ public class MemoryProductService : IProductService
 {
     private readonly List<Dish> _dishes;
     private readonly List<Category> _categories;
+    private readonly IConfiguration _config;
 
-    public MemoryProductService(ICategoryService categoryService)
+    public MemoryProductService(IConfiguration config, ICategoryService categoryService)
     {
+        _config = config;
         var categoryResponse = categoryService.GetCategoryListAsync().Result;
         _categories = categoryResponse.Data ?? new List<Category>();
 
@@ -71,9 +75,9 @@ public class MemoryProductService : IProductService
         };
     }
 
-    public Task<ResponseData<List<Dish>>> GetProductListAsync(string? categoryNormalizedName)
+    public Task<ResponseData<ListModel<Dish>>> GetProductListAsync(string? categoryNormalizedName, int pageNo = 1)
     {
-        var result = new ResponseData<List<Dish>>();
+        var result = new ResponseData<ListModel<Dish>>();
 
         int? categoryId = null;
         if (!string.IsNullOrEmpty(categoryNormalizedName))
@@ -82,14 +86,29 @@ public class MemoryProductService : IProductService
                 .FirstOrDefault(c => c.NormalizedName == categoryNormalizedName)?.Id;
         }
 
-        var data = _dishes
+        var filteredData = _dishes
             .Where(d => categoryId == null || d.CategoryId == categoryId)
             .ToList();
 
-        result.Data = data;
+        int pageSize = _config.GetValue<int>("ItemsPerPage");
+        int totalPages = (int)Math.Ceiling(filteredData.Count / (double)pageSize);
+
+        var items = filteredData
+            .Skip((pageNo - 1) * pageSize)
+            .Take(pageSize)
+            .ToList();
+
+        var listModel = new ListModel<Dish>
+        {
+            Items = items,
+            CurrentPage = pageNo,
+            TotalPages = totalPages
+        };
+
+        result.Data = listModel;
         result.Success = true;
 
-        if (data.Count == 0)
+        if (filteredData.Count == 0)
         {
             result.Success = false;
             result.ErrorMessage = "Нет блюд в выбранной категории";

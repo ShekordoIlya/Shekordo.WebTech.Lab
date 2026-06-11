@@ -32,6 +32,7 @@ builder.Services.AddAuthorization(options =>
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, NoOpEmailSender<ApplicationUser>>();
 builder.Services.AddScoped<ICategoryService, MemoryCategoryService>();
 builder.Services.AddScoped<IProductService, MemoryProductService>();
+builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 
