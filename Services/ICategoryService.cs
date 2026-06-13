@@ -1,4 +1,5 @@
 ﻿using Shekordo.Domain.Entities;
+using Shekordo.Domain.Models;
 
 namespace Shekordo.UI.Services;
 

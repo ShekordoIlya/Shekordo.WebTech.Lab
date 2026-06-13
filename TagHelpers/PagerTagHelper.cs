@@ -1,62 +1,55 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.Mvc.TagHelpers;
 using Microsoft.AspNetCore.Razor.TagHelpers;
-using Microsoft.AspNetCore.Routing;
 using System.Text.Encodings.Web;
 
 namespace Shekordo.UI.TagHelpers;
 
 [HtmlTargetElement("pager")]
-public class PagerTagHelper : TagHelper
+public class PagerTagHelper(LinkGenerator linkGenerator, IHttpContextAccessor httpContextAccessor) : TagHelper
 {
-    private readonly LinkGenerator _linkGenerator;
-    private readonly IHttpContextAccessor _httpContextAccessor;
-
-    public PagerTagHelper(LinkGenerator linkGenerator, IHttpContextAccessor httpContextAccessor)
-    {
-        _linkGenerator = linkGenerator;
-        _httpContextAccessor = httpContextAccessor;
-    }
-
     public int CurrentPage { get; set; }
     public int TotalPages { get; set; }
     public string? Category { get; set; }
+    public bool Admin { get; set; }
+
+    int Prev => CurrentPage == 1 ? 1 : CurrentPage - 1;
+    int Next => CurrentPage == TotalPages ? TotalPages : CurrentPage + 1;
 
     public override void Process(TagHelperContext context, TagHelperOutput output)
     {
-        if (TotalPages <= 1) return;
+        if (TotalPages <= 1)
+        {
+            output.SuppressOutput();
+            return;
+        }
 
         output.TagName = "div";
         output.AddClass("row", HtmlEncoder.Default);
         output.AddClass("mt-4", HtmlEncoder.Default);
 
         var nav = new TagBuilder("nav");
-        nav.Attributes.Add("aria-label", "Page navigation");
+        nav.Attributes.Add("aria-label", "pagination");
 
         var ul = new TagBuilder("ul");
         ul.AddCssClass("pagination");
         ul.AddCssClass("justify-content-center");
 
-        int prev = CurrentPage == 1 ? 1 : CurrentPage - 1;
-        int next = CurrentPage == TotalPages ? TotalPages : CurrentPage + 1;
-
-        ul.InnerHtml.AppendHtml(CreateListItem(Category, prev, "&laquo;", CurrentPage == 1));
-
-        for (int i = 1; i <= TotalPages; i++)
+        ul.InnerHtml.AppendHtml(CreateListItem(Prev, "<span aria-hidden=\"true\">&laquo;</span>", CurrentPage == 1));
+        for (var index = 1; index <= TotalPages; index++)
         {
-            ul.InnerHtml.AppendHtml(CreateListItem(Category, i, i.ToString(), false, i == CurrentPage));
+            ul.InnerHtml.AppendHtml(CreateListItem(index, index.ToString(), false, index == CurrentPage));
         }
 
-        ul.InnerHtml.AppendHtml(CreateListItem(Category, next, "&raquo;", CurrentPage == TotalPages));
+        ul.InnerHtml.AppendHtml(CreateListItem(Next, "<span aria-hidden=\"true\">&raquo;</span>", CurrentPage == TotalPages));
 
         nav.InnerHtml.AppendHtml(ul);
         output.Content.AppendHtml(nav);
     }
 
-    private TagBuilder CreateListItem(string? category, int pageNo, string displayText, bool isDisabled, bool isActive = false)
+    TagBuilder CreateListItem(int pageNo, string innerText, bool isDisabled, bool isActive = false)
     {
         var li = new TagBuilder("li");
         li.AddCssClass("page-item");
@@ -68,19 +61,15 @@ public class PagerTagHelper : TagHelper
 
         if (!isDisabled)
         {
-            var httpContext = _httpContextAccessor.HttpContext;
-            if (httpContext != null)
-            {
-                var url = _linkGenerator.GetPathByAction(
-                    httpContext,
-                    action: "Index",
-                    controller: "Product",
-                    values: new { category, pageNo });
-                a.Attributes.Add("href", url);
-            }
+            var httpContext = httpContextAccessor.HttpContext!;
+            string url = Admin
+                ? linkGenerator.GetPathByPage(httpContext, page: "/Index", values: new { pageNo }) ?? "#"
+                : linkGenerator.GetPathByAction(httpContext, action: "Index", controller: "Product",
+                    values: new { category = Category, pageNo }) ?? "#";
+            a.Attributes.Add("href", url);
         }
 
-        a.InnerHtml.AppendHtml(displayText);
+        a.InnerHtml.AppendHtml(innerText);
         li.InnerHtml.AppendHtml(a);
         return li;
     }

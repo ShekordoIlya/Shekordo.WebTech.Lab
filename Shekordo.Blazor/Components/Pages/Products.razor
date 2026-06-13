@@ -1,0 +1,28 @@
+@page "/products"
+@rendermode InteractiveServer
+@using Shekordo.Domain.Entities
+@using Shekordo.Blazor.Services
+
+<CascadingValue Value="ProductService">
+    <DishesList DishSelected="ShowDetails" />
+    <Pager />
+</CascadingValue>
+
+<DishDetails Dish="SelectedDish" />
+
+@code {
+    [Inject]
+    public IProductService<Dish> ProductService { get; set; } = default!;
+
+    public Dish? SelectedDish { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await ProductService.GetProducts();
+    }
+
+    private void ShowDetails(int id)
+    {
+        SelectedDish = ProductService.Products.FirstOrDefault(d => d.Id == id);
+    }
+}

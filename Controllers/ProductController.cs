@@ -5,37 +5,29 @@ using Shekordo.UI.Services;
 
 namespace Shekordo.UI.Controllers;
 
-public class ProductController : Controller
+public class ProductController(ICategoryService categoryService, IProductService productService) : Controller
 {
-    private readonly ICategoryService _categoryService;
-    private readonly IProductService _productService;
-
-    public ProductController(ICategoryService categoryService, IProductService productService)
-    {
-        _categoryService = categoryService;
-        _productService = productService;
-    }
-
     [Route("Catalog")]
     [Route("Catalog/{category}")]
-
     public async Task<IActionResult> Index(string? category, int pageNo = 1)
     {
-        var categoriesResponse = await _categoryService.GetCategoryListAsync();
-        if (categoriesResponse.Success && categoriesResponse.Data != null)
+        var categoriesResponse = await categoryService.GetCategoryListAsync();
+        if (!categoriesResponse.Success)
         {
-            ViewBag.Categories = categoriesResponse.Data;
+            return NotFound(categoriesResponse.ErrorMessage);
         }
 
-        var currentCategory = string.IsNullOrEmpty(category) ? "Все" :
-            categoriesResponse.Data?.FirstOrDefault(c => c.NormalizedName == category)?.Name ?? "Все";
-        ViewBag.CurrentCategory = currentCategory;
+        ViewData["categories"] = categoriesResponse.Data;
 
-        var productsResponse = await _productService.GetProductListAsync(category, pageNo);
+        var currentCategory = string.IsNullOrEmpty(category)
+            ? "Все"
+            : categoriesResponse.Data?.FirstOrDefault(c => c.NormalizedName == category)?.Name ?? "Все";
+        ViewData["currentCategory"] = currentCategory;
 
+        var productsResponse = await productService.GetProductListAsync(category, pageNo);
         if (!productsResponse.Success)
         {
-            ViewBag.Error = productsResponse.ErrorMessage;
+            ViewData["Error"] = productsResponse.ErrorMessage;
         }
 
         return View(productsResponse.Data ?? new ListModel<Dish>());

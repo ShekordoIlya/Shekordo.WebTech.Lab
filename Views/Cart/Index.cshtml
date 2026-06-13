@@ -1,0 +1,46 @@
+@using Shekordo.Domain.Models
+@model Dictionary<int, CartItem>
+
+@{
+    ViewData["Title"] = "Корзина";
+}
+
+<h2 class="m-2">Корзина заказа</h2>
+
+@if (Model.Count == 0)
+{
+    <p class="m-2">Корзина пуста</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Изображение</th>
+                <th>Название</th>
+                <th>Описание</th>
+                <th>Количество</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Values)
+            {
+                <tr>
+                    <td><img src="@item.Item.Image" width="200" alt="@item.Item.Name" /></td>
+                    <td>@item.Item.Name</td>
+                    <td>@item.Item.Description</td>
+                    <td>@item.Qty</td>
+                    <td>
+                        <a class="btn btn-danger"
+                           asp-action="Remove"
+                           asp-controller="Cart"
+                           asp-route-id="@item.Item.Id">
+                            <i class="fa-solid fa-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

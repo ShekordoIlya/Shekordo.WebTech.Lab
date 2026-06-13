@@ -1,11 +1,19 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 using Shekordo.UI.Data;
+using Shekordo.UI.Middleware;
 using Shekordo.UI.Services;
+
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .WriteTo.File("logs/log.txt", rollingInterval: RollingInterval.Day)
+    .CreateLogger();
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
+builder.Services.AddRazorPages();
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException("Connection string not found.");
@@ -14,7 +22,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
 {
-    options.SignIn.RequireConfirmedAccount = false; 
+    options.SignIn.RequireConfirmedAccount = false;
     options.Password.RequireDigit = false;
     options.Password.RequireNonAlphanumeric = false;
     options.Password.RequireLowercase = false;
@@ -30,9 +38,15 @@ builder.Services.AddAuthorization(options =>
 });
 
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, NoOpEmailSender<ApplicationUser>>();
-builder.Services.AddScoped<ICategoryService, MemoryCategoryService>();
-builder.Services.AddScoped<IProductService, MemoryProductService>();
 builder.Services.AddHttpContextAccessor();
+
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession();
+
+builder.Services.AddHttpClient<ICategoryService, ApiCategoryService>(opt =>
+    opt.BaseAddress = new Uri("https://localhost:7002/api/categories/"));
+builder.Services.AddHttpClient<IProductService, ApiProductService>(opt =>
+    opt.BaseAddress = new Uri("https://localhost:7002/api/dishes/"));
 
 var app = builder.Build();
 
@@ -45,7 +59,8 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
-
+app.UseSession();
+app.UseFileLogger();
 app.UseAuthentication();
 app.UseAuthorization();
 

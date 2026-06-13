@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Shekordo.Domain.Models;
+using Shekordo.UI.Extensions;
 
 namespace Shekordo.UI.ViewComponents;
 
@@ -6,8 +8,7 @@ public class CartViewComponent : ViewComponent
 {
     public IViewComponentResult Invoke()
     {
-        ViewBag.TotalPrice = 125.50m;
-        ViewBag.ItemCount = 3;
-        return View();
+        var cart = HttpContext.Session.Get<Cart>("cart") ?? new Cart();
+        return View(cart);
     }
 }

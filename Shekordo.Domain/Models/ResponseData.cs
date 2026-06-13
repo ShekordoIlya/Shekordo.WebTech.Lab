@@ -1,4 +1,4 @@
-﻿namespace Shekordo.UI.Services;
+namespace Shekordo.Domain.Models;
 
 public class ResponseData<T>
 {

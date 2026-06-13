@@ -6,11 +6,8 @@
     ViewData["Title"] = "Каталог блюд";
     var request = ViewContext.HttpContext.Request;
     var returnUrl = request.Path + request.QueryString.ToUriComponent();
-    var categories = ViewBag.Categories as IEnumerable<Category>;
-    
+    var categories = ViewData["categories"] as IEnumerable<Category>;
     string? category = request.RouteValues["category"]?.ToString();
-    int prev = Model.CurrentPage == 1 ? 1 : Model.CurrentPage - 1;
-    int next = Model.CurrentPage == Model.TotalPages ? Model.TotalPages : Model.CurrentPage + 1;
 }
 
 <h2 class="m-3">Меню кафе</h2>
@@ -19,17 +16,17 @@
     <div class="col-2 border-2">
         <ul class="nav">
             <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" 
-                   data-bs-toggle="dropdown" 
-                   href="#" 
-                   role="button" 
+                <a class="nav-link dropdown-toggle"
+                   data-bs-toggle="dropdown"
+                   href="#"
+                   role="button"
                    aria-expanded="false">
-                    @ViewBag.CurrentCategory
+                    @ViewData["currentCategory"]
                 </a>
                 <ul class="dropdown-menu">
                     <li>
-                        <a class="dropdown-item" 
-                           asp-controller="product" 
+                        <a class="dropdown-item"
+                           asp-controller="product"
                            asp-route-category="">Все</a>
                     </li>
                     @if (categories != null)
@@ -37,8 +34,8 @@
                         @foreach (var item in categories)
                         {
                             <li>
-                                <a class="dropdown-item" 
-                                   asp-controller="product" 
+                                <a class="dropdown-item"
+                                   asp-controller="product"
                                    asp-route-category="@item.NormalizedName">
                                     @item.Name
                                 </a>
@@ -55,15 +52,15 @@
         {
             <div class="row row-cols-1 row-cols-md-3 g-4">
                 @foreach (var item in Model.Items)
-{
-    <partial name="_ProductItemPartial" model="item" />
-}
+                {
+                    <partial name="_ProductItemPartial" model="item" />
+                }
             </div>
         }
         else
         {
             <div class="alert alert-warning">
-                @ViewBag.Error ?? "Нет блюд в выбранной категории"
+                @(ViewData["Error"] ?? "Нет блюд в выбранной категории")
             </div>
         }
     </div>
@@ -72,12 +69,3 @@
 <pager current-page="@Model.CurrentPage"
        total-pages="@Model.TotalPages"
        category="@category"></pager>
-
-@section Scripts {
-    <script>
-        var dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'))
-        var dropdownList = dropdownElementList.map(function (dropdownToggleEl) {
-            return new bootstrap.Dropdown(dropdownToggleEl)
-        })
-    </script>
-}

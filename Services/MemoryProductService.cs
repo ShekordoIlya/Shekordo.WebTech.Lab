@@ -1,4 +1,5 @@
-﻿using Shekordo.Domain.Entities;
+﻿using Microsoft.AspNetCore.Http;
+using Shekordo.Domain.Entities;
 using Shekordo.Domain.Models;
 using Microsoft.Extensions.Configuration;
 
@@ -115,5 +116,52 @@ public class MemoryProductService : IProductService
         }
 
         return Task.FromResult(result);
+    }
+
+    public Task<ResponseData<Dish>> GetProductByIdAsync(int id)
+    {
+        var dish = _dishes.FirstOrDefault(d => d.Id == id);
+        return Task.FromResult(new ResponseData<Dish>
+        {
+            Data = dish,
+            Success = dish != null,
+            ErrorMessage = dish == null ? "Объект не найден" : null
+        });
+    }
+
+    public Task UpdateProductAsync(int id, Dish product, IFormFile? formFile)
+    {
+        var existing = _dishes.FirstOrDefault(d => d.Id == id);
+        if (existing != null)
+        {
+            existing.Name = product.Name;
+            existing.Description = product.Description;
+            existing.Calories = product.Calories;
+            existing.CategoryId = product.CategoryId;
+            if (formFile != null)
+            {
+                existing.Image = $"/images/{formFile.FileName}";
+            }
+        }
+
+        return Task.CompletedTask;
+    }
+
+    public Task DeleteProductAsync(int id)
+    {
+        _dishes.RemoveAll(d => d.Id == id);
+        return Task.CompletedTask;
+    }
+
+    public Task<ResponseData<Dish>> CreateProductAsync(Dish product, IFormFile? formFile)
+    {
+        product.Id = _dishes.Count == 0 ? 1 : _dishes.Max(d => d.Id) + 1;
+        if (formFile != null)
+        {
+            product.Image = $"/images/{formFile.FileName}";
+        }
+
+        _dishes.Add(product);
+        return Task.FromResult(new ResponseData<Dish> { Data = product });
     }
 }
