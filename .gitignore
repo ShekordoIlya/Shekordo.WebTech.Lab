@@ -1,0 +1,47 @@
+# Пользовательские файлы баз данных
+*.db
+*.db-shm
+*.db-wal
+
+# Папки сборки
+bin/
+obj/
+*.user
+*.suo
+*.cache
+*.vs/
+
+# Папки с логами
+logs/
+
+# Файлы Visual Studio
+.vs/
+*.sln.docstates
+
+# NuGet packages
+*.nupkg
+**/[Pp]ackages/*
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+!Shekordo.API/wwwroot/Images/*
+!Shekordo.UI/wwwroot/Images/*

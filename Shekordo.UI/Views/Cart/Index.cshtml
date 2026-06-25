@@ -1,0 +1,45 @@
+﻿@using Shekordo.Domain.Entities
+@model Dictionary<int, CartItem>
+@{
+    ViewData["Title"] = "Корзина";
+}
+
+@if (Model.Count == 0)
+{
+    <h2 class="m-2">Корзина пуста</h2>
+}
+else
+{
+    <h2 class="m-2">Ваша корзина:</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Изображение</th>
+                <th>Название</th>
+                <th>Описание</th>
+                <th>Количество</th>
+                <th>Действие</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td><img src="@item.Value.Item.Image" width="100" /></td>
+                    <td>@item.Value.Item.Name</td>
+                    <td>@item.Value.Item.Description</td>
+                    <td>@item.Value.Qty</td>
+                    <td>
+                        <a class="btn btn-danger" 
+                           asp-action="Remove" 
+                           asp-controller="cart" 
+                           asp-route-id="@item.Value.Item.Id">
+                            <i class="fas fa-trash"></i> Удалить
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <h3>Общее количество калорий: @Model.Sum(x => x.Value.Item.Calories * x.Value.Qty)</h3>
+}

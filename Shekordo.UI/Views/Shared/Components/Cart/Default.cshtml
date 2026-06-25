@@ -1,0 +1,6 @@
+﻿@using Shekordo.Domain.Entities
+@model Cart
+
+<a asp-action="Index" asp-controller="Cart" class="navbar-text ms-auto nav-color">
+    @Model.TotalCalories калорий <i class="fa-solid fa-cart-shopping"></i> (@Model.Count)
+</a>
