@@ -1,6 +1,0 @@
-@Shekordo.API_HostAddress = http://localhost:5278
-
-GET {{Shekordo.API_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
